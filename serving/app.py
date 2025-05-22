@@ -1,7 +1,9 @@
-from fastapi import FastAPI, HTTPException, BackgroundTasks
+from fastapi import FastAPI, HTTPException, BackgroundTasks, Response
 from pydantic import BaseModel
 from typing import List, Literal
 import asyncio
+
+from prometheus_client import Counter, generate_latest, CONTENT_TYPE_LATEST
 
 app = FastAPI()
 
@@ -9,6 +11,9 @@ model_state = {
     "model_id": None,
     "status": "NOT_DEPLOYED"
 }
+
+# Prometheus counter for tracking number of completion requests
+request_counter = Counter("ml_requests_total", "Total number of /completion requests received")
 
 class Message(BaseModel):
     role: Literal["user", "assistant"]
@@ -52,9 +57,13 @@ async def complete(req: CompletionRequest):
     if model_state["status"] != "RUNNING":
         return {"status": "error", "message": "Model is not running"}
 
+    request_counter.inc()  # ✅ Increment request count
     user_msg = req.messages[-1].content
-    # Simulated response
     return {
         "status": "success",
         "response": [{"role": "assistant", "message": f"Echo: {user_msg}"}]
     }
+
+@app.get("/metrics")
+def metrics():
+    return Response(content=generate_latest(), media_type=CONTENT_TYPE_LATEST)
