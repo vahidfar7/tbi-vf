@@ -16,7 +16,7 @@ resource "aws_security_group" "ml_serving_sg" {
     from_port   = 22
     to_port     = 22
     protocol    = "tcp"
-    cidr_blocks = ["45.144.161.41/32"] # update with your IP
+    cidr_blocks = ["<your-public-ip>"] # update with your IP
   }
 
   egress {

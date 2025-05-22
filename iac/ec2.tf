@@ -18,8 +18,8 @@ resource "aws_instance" "ml_serving_instance" {
     systemctl start docker
     systemctl enable docker
 
-    aws ecr get-login-password --region eu-west-2 | docker login --username AWS --password-stdin 740590284573.dkr.ecr.eu-west-2.amazonaws.com
-    docker pull 740590284573.dkr.ecr.eu-west-2.amazonaws.com/ml-serving-app:latest
-    docker run -d -p 80:8000 740590284573.dkr.ecr.eu-west-2.amazonaws.com/ml-serving-app:latest
+    aws ecr get-login-password --region eu-west-2 | docker login --username AWS --password-stdin <your-account-id>.dkr.ecr.eu-west-2.amazonaws.com
+    docker pull <your-account-id>.dkr.ecr.eu-west-2.amazonaws.com/ml-serving-app:latest
+    docker run -d -p 80:8000 <your-account-id>.dkr.ecr.eu-west-2.amazonaws.com/ml-serving-app:latest
   EOF
 }
